@@ -21,22 +21,52 @@ DigitalOut seven_seg[] = {
 };
 
 //　７セグの桁数指定のピンを宣言
-DigitalOut four_digit[] = {
-    DigitalOut(D12),
-    DigitalOut(D11),
-    DigitalOut(D10),
-    DigitalOut(D9)
+DigitalInOut four_digit[] = {
+    DigitalInOut(D12),
+    DigitalInOut(D11),
+    DigitalInOut(D10),
+    DigitalInOut(D9)
 };
+
+// ボタン用のピンを宣言
+DigitalIn one_min(A0);
+DigitalIn ten_sec(A1);
+DigitalIn start_stop(A2);
+DigitalIn reset(D3);
+
+
+// 電子ブザーのFET用出力を宣言
+DigitalInOut Buzzer(A7);
 
 int main()
 {
     // Initialise the digital pin LED1 as an output
     DigitalOut led(LED1);
 
+    one_min.mode(PullUp);
+    ten_sec.mode(PullUp);
+    start_stop.mode(PullUp);
+    reset.mode(PullUp);
+
+    for ( int i = 0; i < 4; i++)
+    {
+        four_digit[i].output();
+        four_digit[i].mode(PullDown);
+    }
+
     while (true) {
         led = !led;
         ThisThread::sleep_for(BLINKING_RATE);
     }
+}
+
+void specify_digit(int num)
+{
+    for ( int i = 0; i < 4; i++)
+    {
+        four_digit[i] = 0;
+    }
+    four_digit[num] = 1;
 }
 
 void show_number(int num)
