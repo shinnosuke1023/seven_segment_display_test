@@ -38,3 +38,84 @@ int main()
         ThisThread::sleep_for(BLINKING_RATE);
     }
 }
+
+void show_number(int num)
+{
+    for ( int i = 0; i < 7; i++)
+    {
+        seven_seg[i] = 0;
+    }
+    switch (num) {
+    case 0:
+        seven_seg[0] = 1;
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        seven_seg[3] = 1;
+        seven_seg[4] = 1;
+        seven_seg[5] = 1;
+        break;
+    case 1:
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        break;
+    case 2:
+        seven_seg[0] = 1;
+        seven_seg[1] = 1;
+        seven_seg[3] = 1;
+        seven_seg[4] = 1;
+        seven_seg[6] = 1;
+        break;
+    case 3:
+        seven_seg[0] = 1;
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        seven_seg[3] = 1;
+        seven_seg[6] = 1;
+        break;
+    case 4:
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        seven_seg[5] = 1;
+        seven_seg[6] = 1;
+        break;
+    case 5:
+        seven_seg[0] = 1;
+        seven_seg[2] = 1;
+        seven_seg[3] = 1;
+        seven_seg[5] = 1;
+        seven_seg[6] = 1;
+        break;
+    case 6:
+        seven_seg[0] = 1;
+        seven_seg[2] = 1;
+        seven_seg[3] = 1;
+        seven_seg[4] = 1;
+        seven_seg[5] = 1;
+        seven_seg[6] = 1;
+        break;
+    case 7:
+        seven_seg[0] = 1;
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        break;
+    case 8:
+        seven_seg[0] = 1;
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        seven_seg[3] = 1;
+        seven_seg[4] = 1;
+        seven_seg[5] = 1;
+        seven_seg[6] = 1;
+        break;
+    case 9:
+        seven_seg[0] = 1;
+        seven_seg[1] = 1;
+        seven_seg[2] = 1;
+        seven_seg[3] = 1;
+        seven_seg[5] = 1;
+        seven_seg[6] = 1;
+        break;
+    default:
+        printf("ほかの値です。\r\n");
+    }
+}
