@@ -9,18 +9,24 @@
 // Blinking rate in milliseconds
 #define BLINKING_RATE     500ms
 
-
-DigitalOut seven_segment[] = {
+// ７セグ出力先のピンを宣言
+DigitalOut seven_seg[] = {
     DigitalOut(D2),
     DigitalOut(D4),
     DigitalOut(D6),
     DigitalOut(D7),
     DigitalOut(D8),
     DigitalOut(D3),
-    DigitalOut(D5),
-    
+    DigitalOut(D5)
 };
 
+//　７セグの桁数指定のピンを宣言
+DigitalOut four_digit[] = {
+    DigitalOut(D12),
+    DigitalOut(D11),
+    DigitalOut(D10),
+    DigitalOut(D9)
+};
 
 int main()
 {
