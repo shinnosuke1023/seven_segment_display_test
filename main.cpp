@@ -32,7 +32,7 @@ DigitalInOut four_digit[] = {
 DigitalIn one_min(A0);
 DigitalIn ten_sec(A1);
 DigitalIn start_stop(A2);
-DigitalIn reset(D3);
+DigitalIn reset(A3);
 
 
 // 電子ブザーのFET用出力を宣言
@@ -148,4 +148,69 @@ void show_number(int num)
     default:
         printf("ほかの値です。\r\n");
     }
+}
+
+void test_main_loop()
+{
+    int value = 0;
+    int digit = 1;
+    int one_min_val;
+    int ten_sec_val;
+    int start_stop_val;
+    int reset_val;
+    while (1)
+    {
+        one_min_val = one_min;
+        ten_sec_val = ten_sec;
+        start_stop_val = start_stop;
+        reset_val = reset;
+        if (one_min_val == 1)
+        {
+            if (value == 0)
+            {
+                value = 9;
+            }
+            else
+            {
+                value -= 1;
+            }
+        }
+        if (ten_sec_val == 1)
+        {
+            if (value == 9)
+            {
+                value = 0;
+            }
+            else
+            {
+                value += 1;
+            }
+        }
+        if (start_stop_val == 1)
+        {
+            if (digit == 1)
+            {
+                digit = 4;
+            }
+            else 
+            {
+                digit -= 1;
+            }
+        }
+        if (reset_val == 1)
+        {
+            if (digit == 4)
+            {
+                digit = 1;
+            }
+            else
+            {
+                digit += 1;
+            }
+        }
+        specify_digit(digit);
+        show_number(value);
+    }
+        
+
 }
