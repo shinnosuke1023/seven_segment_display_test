@@ -1,21 +1,13 @@
-/* mbed Microcontroller Library
- * Copyright (c) 2019 ARM Limited
- * SPDX-License-Identifier: Apache-2.0
- */
-
 #include "mbed.h"
 
-
-// Blinking rate in milliseconds
-#define BLINKING_RATE     500ms
 
 // ７セグ出力先のピンを宣言
 DigitalOut seven_seg[] = {
     DigitalOut(D2),
     DigitalOut(D4),
     DigitalOut(D6),
-    DigitalOut(D7),
-    DigitalOut(D8),
+    DigitalOut(D1), // D7 => D1
+    DigitalOut(D0), // D8 => D0 マイコンピン破損により導通不可のため
     DigitalOut(D3),
     DigitalOut(D5)
 };
@@ -34,31 +26,9 @@ DigitalIn ten_sec(A1);
 DigitalIn start_stop(A2);
 DigitalIn reset(A3);
 
-
 // 電子ブザーのFET用出力を宣言
 DigitalInOut Buzzer(A7);
 
-int main()
-{
-    // Initialise the digital pin LED1 as an output
-    DigitalOut led(LED1);
-
-    one_min.mode(PullUp);
-    ten_sec.mode(PullUp);
-    start_stop.mode(PullUp);
-    reset.mode(PullUp);
-
-    for ( int i = 0; i < 4; i++)
-    {
-        four_digit[i].output();
-        four_digit[i].mode(PullDown);
-    }
-
-    while (true) {
-        led = !led;
-        ThisThread::sleep_for(BLINKING_RATE);
-    }
-}
 
 void specify_digit(int num)
 {
@@ -150,6 +120,24 @@ void show_number(int num)
     }
 }
 
+void module_test_loop()
+{
+    int value = 0;
+    while (1)
+    {
+        wait(1);
+        show_number(value);
+        if (value == 9)
+        {
+            value = 0;
+        }
+        else
+        {
+            value += 1;
+        }
+    }
+}
+
 void test_main_loop()
 {
     int value = 0;
@@ -213,4 +201,23 @@ void test_main_loop()
     }
         
 
+}
+
+int main()
+{
+    // Initialise the digital pin LED1 as an output
+    DigitalOut led(LED1);
+
+    one_min.mode(PullUp);
+    ten_sec.mode(PullUp);
+    start_stop.mode(PullUp);
+    reset.mode(PullUp);
+
+    for ( int i = 0; i < 4; i++)
+    {
+        four_digit[i].output();
+        four_digit[i].mode(PullDown);
+    }
+
+    module_test_loop();
 }
