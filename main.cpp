@@ -260,6 +260,23 @@ void test_main_loop()
 
 }
 
+void test_main_loop2()
+{
+    remaining_time = 0;
+    while (1)
+    {
+        show_time(remaining_time);
+        if(remaining_time == 5990)
+        {
+            remaining_time = 0;
+        }
+        else
+        {
+            remaining_time++;
+        }
+    }
+}
+
 int main()
 {
 
@@ -274,5 +291,5 @@ int main()
         four_digit[i].mode(PullDown);
     }
 
-    module_test_loop();
+    test_main_loop2();
 }
