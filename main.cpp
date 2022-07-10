@@ -1,5 +1,10 @@
 #include "mbed.h"
 
+#define setting 0
+#define counting 0
+
+
+//Serial pc(USBTX, USBRX); // tx, rx
 
 // ７セグ出力先のピンを宣言
 DigitalOut seven_seg[] = {
@@ -7,7 +12,7 @@ DigitalOut seven_seg[] = {
     DigitalOut(D4),
     DigitalOut(D6),
     DigitalOut(D1), // D7 => D1
-    DigitalOut(D0), // D8 => D0 マイコンピン破損により導通不可のため
+    DigitalOut(D0), // D8 => D0 マイコンピン仕様により電流不足のため
     DigitalOut(D3),
     DigitalOut(D5)
 };
@@ -28,6 +33,24 @@ DigitalIn reset(A3);
 
 // 電子ブザーのFET用出力を宣言
 DigitalInOut Buzzer(A7);
+
+// ボタン入力制御用変数を宣言
+int one_min_pressed = 0;
+int ten_sec_pressed = 0;
+int start_stop_pressed = 0;
+int reset_pressed = 0;
+
+// 時間用変数を宣言
+int setting_time;
+int remaining_time;
+int minute;
+int second;
+
+// 各桁の数字用変数を宣言
+int digits[] = {0, 0, 0, 0};
+
+// 現在のモードを表す変数を宣言
+int mode = setting;
 
 
 void specify_digit(int num)
@@ -120,6 +143,40 @@ void show_number(int num)
     }
 }
 
+void show_time(int time)
+{
+    second = time % 60;
+    minute = (time - second) / 60;
+    digits[1] = minute % 10;
+    digits[0] = (minute - digits[1]) / 10;
+    digits[3] = second % 10;
+    digits[2] = (second - digits[3]) / 10;
+    for (int i; i < 4;i++)
+    {
+        for ( int n = 0; n < 7; n++)
+        {
+            seven_seg[n] = 0;
+        }
+        specify_digit(i);
+        show_number(digits[i]);
+    }
+
+}
+
+void buzzer_ringing()
+{
+    for (int x;x<3;x++)
+    {
+        for(int y;y<4;y++)
+        {
+            Buzzer = 1;
+            Buzzer = 0;
+            wait(0.2);
+        }
+        wait(0.2);
+    }
+}
+
 void module_test_loop()
 {
     int value = 0;
@@ -203,10 +260,25 @@ void test_main_loop()
 
 }
 
+void test_main_loop2()
+{
+    remaining_time = 0;
+    while (1)
+    {
+        show_time(remaining_time);
+        if(remaining_time == 5990)
+        {
+            remaining_time = 0;
+        }
+        else
+        {
+            remaining_time++;
+        }
+    }
+}
+
 int main()
 {
-    // Initialise the digital pin LED1 as an output
-    DigitalOut led(LED1);
 
     one_min.mode(PullUp);
     ten_sec.mode(PullUp);
@@ -219,5 +291,5 @@ int main()
         four_digit[i].mode(PullDown);
     }
 
-    module_test_loop();
+    test_main_loop2();
 }
