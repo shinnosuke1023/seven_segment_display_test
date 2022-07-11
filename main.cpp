@@ -199,9 +199,9 @@ void buzzer_ringing()
         {
             Buzzer = 1;
             Buzzer = 0;
-            wait(0.2);
+            thread_sleep_for(200);
         }
-        wait(0.2);
+        thread_sleep_for(200);
     }
 }
 
@@ -210,7 +210,7 @@ void module_test_loop()
     int value = 0;
     while (1)
     {
-        wait(1);
+        thread_sleep_for(1000);
         show_number(value);
         if (value == 9)
         {
@@ -292,7 +292,7 @@ void test_main_loop2()
 {
     remaining_time = 0;
     t.start();
-    show_7seg.attach(&show_time, 0.005);
+    show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
 }
 
 int main()
@@ -311,3 +311,7 @@ int main()
 
     test_main_loop2();
 }
+// やることリスト
+//タイマー時間が30分までなので30分のを何回か繰り返せるようにする
+//
+//
