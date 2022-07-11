@@ -1,7 +1,7 @@
 #include "mbed.h"
 
 #define setting 0
-#define counting 0
+#define counting 1
 
 
 //Serial pc(USBTX, USBRX); // tx, rx
@@ -33,6 +33,12 @@ DigitalIn reset(A3);
 
 // 電子ブザーのFET用出力を宣言
 DigitalInOut Buzzer(A7);
+
+// ボタン入力保持用変数を宣言
+int one_min_val = 0;
+int ten_sec_val = 0;
+int start_stop_val = 0;
+int reset_val = 0;
 
 // ボタン入力制御用変数を宣言
 int one_min_pressed = 0;
@@ -199,7 +205,7 @@ void buzzer_ringing()
         {
             Buzzer = 1;
             Buzzer = 0;
-            thread_sleep_for(200);
+            thread_sleep_for(100);
         }
         thread_sleep_for(200);
     }
@@ -290,9 +296,20 @@ void test_main_loop()
 
 void test_main_loop2()
 {
+    setting_time = 120;
     remaining_time = 0;
     t.start();
     show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
+    while (1)
+    {
+        remaining_time = setting_time - t.read();
+        if (remaining_time == 0)
+        {
+            mode = setting;
+            buzzer_ringing();
+            break;
+        }
+    }
 }
 
 int main()
@@ -309,7 +326,69 @@ int main()
         four_digit[i].mode(PullDown);
     }
 
-    test_main_loop2();
+    //test_main_loop2();
+    while (1)
+    {
+        if (mode == setting)
+        {
+            one_min_val = one_min;
+            ten_sec_val = ten_sec;
+            start_stop_val = start_stop;
+            reset_val = reset;
+            if (one_min_val == 1)
+            {
+                if (one_min_pressed == 0)
+                {
+                    setting_time += 60;
+                    one_min_pressed = 1;
+                }
+                else
+                {
+                    one_min_pressed = 0;
+                }
+            }
+            if (ten_sec_val == 1)
+            {
+                if (ten_sec_pressed == 0)
+                {
+                    setting_time += 10;
+                    ten_sec_pressed = 1;
+                }
+                else
+                {
+                    ten_sec_pressed = 0;
+                }
+            }
+            if (start_stop_val == 1)
+            {
+                if (start_stop_pressed == 0)
+                {
+                    mode = counting;
+                    start_stop_pressed = 1;
+                }
+                else
+                {
+                    start_stop_pressed = 0;
+                }
+            }
+            if (reset_val == 1)
+            {
+                if (reset_pressed == 0)
+                {
+                    setting_time = 0;
+                    reset_pressed = 1;
+                }
+                else
+                {
+                    reset_pressed = 0;
+                }
+            }
+        }
+        else
+        {
+            test_main_loop2();
+        }
+    }
 }
 // やることリスト
 //タイマー時間が30分までなので30分のを何回か繰り返せるようにする
