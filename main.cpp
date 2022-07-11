@@ -49,8 +49,17 @@ int second;
 // 各桁の数字用変数を宣言
 int digits[] = {0, 0, 0, 0};
 
+// 表示する桁数を指定するためのカウントを宣言
+int digit_count = 0;
+
 // 現在のモードを表す変数を宣言
 int mode = setting;
+
+// カウント用のタイマーを宣言
+Timer t;
+
+// ７セグ表示用の繰り返し割り込みを宣言
+Ticker show_7seg;
 
 
 void specify_digit(int num)
@@ -64,10 +73,6 @@ void specify_digit(int num)
 
 void show_number(int num)
 {
-    for ( int i = 0; i < 7; i++)
-    {
-        seven_seg[i] = 0;
-    }
     switch (num) {
     case 0:
         seven_seg[0] = 1;
@@ -143,22 +148,45 @@ void show_number(int num)
     }
 }
 
-void show_time(int time)
+void erace_number()
 {
+    for ( int i = 0; i < 4; i++)
+    {
+        four_digit[i] = 0;
+    }
+    for ( int n = 0; n < 7; n++)
+        {
+            seven_seg[n] = 0;
+        }
+}
+
+void show_time()
+{
+    int time = t.read();
     second = time % 60;
     minute = (time - second) / 60;
     digits[1] = minute % 10;
     digits[0] = (minute - digits[1]) / 10;
     digits[3] = second % 10;
     digits[2] = (second - digits[3]) / 10;
-    for (int i; i < 4;i++)
-    {
-        for ( int n = 0; n < 7; n++)
-        {
-            seven_seg[n] = 0;
-        }
-        specify_digit(i);
-        show_number(digits[i]);
+    erace_number();
+    switch (digit_count) {
+    case 0:
+        show_number(digits[0]);
+        digit_count++;
+        break;
+    case 1:
+        show_number(digits[1]);
+        digit_count++;
+        break;
+    case 2:
+        show_number(digits[2]);
+        digit_count++;
+        break;
+    case 3:
+        show_number(digits[3]);
+        digit_count = 0;
+        break;
     }
 
 }
@@ -263,18 +291,8 @@ void test_main_loop()
 void test_main_loop2()
 {
     remaining_time = 0;
-    while (1)
-    {
-        show_time(remaining_time);
-        if(remaining_time == 5990)
-        {
-            remaining_time = 0;
-        }
-        else
-        {
-            remaining_time++;
-        }
-    }
+    t.start();
+    show_7seg.attach(&show_time, 0.005);
 }
 
 int main()
