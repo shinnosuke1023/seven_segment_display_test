@@ -168,9 +168,9 @@ void erace_number()
 
 void show_time()
 {
-    int time = t.read();
-    second = time % 60;
-    minute = (time - second) / 60;
+    remaining_time = setting_time - t.read(); 
+    second = remaining_time % 60;
+    minute = (remaining_time - second) / 60;
     digits[1] = minute % 10;
     digits[0] = (minute - digits[1]) / 10;
     digits[3] = second % 10;
@@ -178,18 +178,22 @@ void show_time()
     erace_number();
     switch (digit_count) {
     case 0:
+        specify_digit(0);
         show_number(digits[0]);
         digit_count++;
         break;
     case 1:
+        specify_digit(1);
         show_number(digits[1]);
         digit_count++;
         break;
     case 2:
+        specify_digit(2);
         show_number(digits[2]);
         digit_count++;
         break;
     case 3:
+        specify_digit(3);
         show_number(digits[3]);
         digit_count = 0;
         break;
@@ -296,7 +300,7 @@ void test_main_loop()
 
 void test_main_loop2()
 {
-    setting_time = 120;
+    setting_time = 750;
     remaining_time = 0;
     t.start();
     show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
@@ -319,15 +323,15 @@ int main()
     ten_sec.mode(PullUp);
     start_stop.mode(PullUp);
     reset.mode(PullUp);
-
     for ( int i = 0; i < 4; i++)
     {
         four_digit[i].output();
         four_digit[i].mode(PullDown);
     }
 
-    //test_main_loop2();
-    while (1)
+    test_main_loop2();
+    
+    /*while (1)
     {
         if (mode == setting)
         {
@@ -365,6 +369,7 @@ int main()
                 {
                     mode = counting;
                     start_stop_pressed = 1;
+                    test_main_loop2();
                 }
                 else
                 {
@@ -386,9 +391,9 @@ int main()
         }
         else
         {
-            test_main_loop2();
+            thread_sleep_for(1);
         }
-    }
+    }*/
 }
 // やることリスト
 //タイマー時間が30分までなので30分のを何回か繰り返せるようにする
