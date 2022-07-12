@@ -4,7 +4,7 @@
 #define counting 1
 
 
-//Serial pc(USBTX, USBRX); // tx, rx
+Serial pc(USBTX, USBRX); // tx, rx
 
 // ７セグ出力先のピンを宣言
 DigitalOut seven_seg[] = {
@@ -47,8 +47,8 @@ int start_stop_pressed = 0;
 int reset_pressed = 0;
 
 // 時間用変数を宣言
-int setting_time;
-int remaining_time;
+int setting_time = 0;
+int remaining_time = 0;
 int minute;
 int second;
 
@@ -168,7 +168,6 @@ void erace_number()
 
 void show_time()
 {
-    remaining_time = setting_time - t.read(); 
     second = remaining_time % 60;
     minute = (remaining_time - second) / 60;
     digits[1] = minute % 10;
@@ -303,14 +302,19 @@ void test_main_loop2()
     setting_time = 750;
     remaining_time = 0;
     t.start();
-    show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
     while (1)
     {
         remaining_time = setting_time - t.read();
         if (remaining_time == 0)
         {
+            t.reset();
             mode = setting;
             buzzer_ringing();
+            break;
+        }
+        if (mode == setting)
+        {
+            t.reset();
             break;
         }
     }
@@ -328,10 +332,11 @@ int main()
         four_digit[i].output();
         four_digit[i].mode(PullDown);
     }
+    show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
 
-    test_main_loop2();
+    //test_main_loop2();
     
-    /*while (1)
+    while (1)
     {
         if (mode == setting)
         {
@@ -345,11 +350,15 @@ int main()
                 {
                     setting_time += 60;
                     one_min_pressed = 1;
+                    Buzzer = 1;
+                    Buzzer = 0;
+                    pc.printf("one_min");
                 }
-                else
-                {
-                    one_min_pressed = 0;
-                }
+                
+            }
+            else
+            {
+                one_min_pressed = 0;
             }
             if (ten_sec_val == 1)
             {
@@ -357,11 +366,14 @@ int main()
                 {
                     setting_time += 10;
                     ten_sec_pressed = 1;
+                    Buzzer = 1;
+                    Buzzer = 0;
+                    pc.printf("ten_sec");
                 }
-                else
-                {
-                    ten_sec_pressed = 0;
-                }
+            }
+            else
+            {
+                ten_sec_pressed = 0;
             }
             if (start_stop_val == 1)
             {
@@ -369,12 +381,15 @@ int main()
                 {
                     mode = counting;
                     start_stop_pressed = 1;
+                    Buzzer = 1;
+                    Buzzer = 0;
+                    pc.printf("start");
                     test_main_loop2();
                 }
-                else
-                {
-                    start_stop_pressed = 0;
-                }
+            }
+            else
+            {
+                start_stop_pressed = 0;
             }
             if (reset_val == 1)
             {
@@ -382,18 +397,37 @@ int main()
                 {
                     setting_time = 0;
                     reset_pressed = 1;
+                    Buzzer = 1;
+                    Buzzer = 0;
+                    pc.printf("reset");
                 }
-                else
-                {
-                    reset_pressed = 0;
-                }
+                
+            }
+            else
+            {
+                reset_pressed = 0;
             }
         }
         else
         {
-            thread_sleep_for(1);
+            start_stop_val = start_stop;
+            if (start_stop_val == 1)
+            {
+                if (start_stop_pressed == 0)
+                {
+                    mode = setting;
+                    start_stop_pressed = 1;
+                    Buzzer = 1;
+                    Buzzer = 0;
+                    pc.printf("stop");
+                }
+            }
+            else
+            {
+                start_stop_pressed = 0;
+            }
         }
-    }*/
+    }
 }
 // やることリスト
 //タイマー時間が30分までなので30分のを何回か繰り返せるようにする
