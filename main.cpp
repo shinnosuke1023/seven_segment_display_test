@@ -29,22 +29,22 @@ DigitalInOut four_digit[] = {
 DigitalIn one_min(A0);
 DigitalIn ten_sec(A1);
 DigitalIn start_stop(A2);
-DigitalIn reset(A3);
+// DigitalIn reset(A3); リセットボタンはリセットピンを使用するため廃止
 
 // 電子ブザーのFET用出力を宣言
-DigitalInOut Buzzer(A7);
+DigitalOut Buzzer(A6); // A7 => A6 謎のエラーのため
 
 // ボタン入力保持用変数を宣言
 int one_min_val = 0;
 int ten_sec_val = 0;
 int start_stop_val = 0;
-int reset_val = 0;
+//int reset_val = 0;
 
 // ボタン入力制御用変数を宣言
 int one_min_pressed = 0;
 int ten_sec_pressed = 0;
 int start_stop_pressed = 0;
-int reset_pressed = 0;
+//int reset_pressed = 0;
 
 // 時間用変数を宣言
 int setting_time = 0;
@@ -202,15 +202,16 @@ void show_time()
 
 void buzzer_ringing()
 {
-    for (int x;x<3;x++)
+    for (int x = 0;x<3;x++)
     {
-        for(int y;y<4;y++)
+        for(int y = 0;y<4;y++)
         {
             Buzzer = 1;
+            thread_sleep_for(20);
             Buzzer = 0;
-            thread_sleep_for(100);
+            thread_sleep_for(120);
         }
-        thread_sleep_for(200);
+        thread_sleep_for(240);
     }
 }
 
@@ -239,13 +240,13 @@ void test_main_loop()
     int one_min_val;
     int ten_sec_val;
     int start_stop_val;
-    int reset_val;
+    //int reset_val;
     while (1)
     {
         one_min_val = one_min;
         ten_sec_val = ten_sec;
         start_stop_val = start_stop;
-        reset_val = reset;
+        //reset_val = reset;
         if (one_min_val == 1)
         {
             if (value == 0)
@@ -279,6 +280,7 @@ void test_main_loop()
                 digit -= 1;
             }
         }
+        /*
         if (reset_val == 1)
         {
             if (digit == 4)
@@ -290,6 +292,7 @@ void test_main_loop()
                 digit += 1;
             }
         }
+        */
         specify_digit(digit);
         show_number(value);
     }
@@ -305,9 +308,27 @@ void test_main_loop2()
     while (1)
     {
         remaining_time = setting_time - t.read();
+        if (t.read() == 1800)
+        {
+            if (remaining_time > 0)
+            {
+                setting_time = remaining_time;
+                pc.printf("clock changed\r\n");
+                t.stop();
+                t.reset();
+                t.start();
+            }
+        }
         if (remaining_time == 0)
         {
+            if (setting_time == 0)
+            {
+                break;
+            }
+            t.stop();
             t.reset();
+            pc.printf("end\r\n");
+            setting_time = 0;
             mode = setting;
             buzzer_ringing();
             break;
@@ -316,6 +337,25 @@ void test_main_loop2()
         {
             t.reset();
             break;
+        }
+        start_stop_val = !start_stop;
+        if (start_stop_val == 1)
+        {
+            if (start_stop_pressed == 0)
+            {
+                setting_time = remaining_time;
+                mode = setting;
+                start_stop_pressed = 1;
+                t.stop();
+                Buzzer = 1;
+                thread_sleep_for(20);
+                Buzzer = 0;
+                pc.printf("stop\r\n");
+            }
+        }
+        else
+        {
+            start_stop_pressed = 0;
         }
     }
 }
@@ -326,7 +366,7 @@ int main()
     one_min.mode(PullUp);
     ten_sec.mode(PullUp);
     start_stop.mode(PullUp);
-    reset.mode(PullUp);
+    //reset.mode(PullUp);
     for ( int i = 0; i < 4; i++)
     {
         four_digit[i].output();
@@ -344,7 +384,7 @@ int main()
             one_min_val = !one_min;
             ten_sec_val = !ten_sec;
             start_stop_val = !start_stop;
-            reset_val = !reset;
+            //reset_val = !reset;
             if (one_min_val == 1)
             {
                 if (one_min_pressed == 0)
@@ -352,8 +392,9 @@ int main()
                     setting_time += 60;
                     one_min_pressed = 1;
                     Buzzer = 1;
+                    thread_sleep_for(20);
                     Buzzer = 0;
-                    pc.printf("one_min");
+                    pc.printf("one_min\r\n");
                 }
                 
             }
@@ -368,8 +409,9 @@ int main()
                     setting_time += 10;
                     ten_sec_pressed = 1;
                     Buzzer = 1;
+                    thread_sleep_for(20);
                     Buzzer = 0;
-                    pc.printf("ten_sec");
+                    pc.printf("ten_sec\r\n");
                 }
             }
             else
@@ -383,8 +425,9 @@ int main()
                     mode = counting;
                     start_stop_pressed = 1;
                     Buzzer = 1;
+                    thread_sleep_for(20);
                     Buzzer = 0;
-                    pc.printf("start");
+                    pc.printf("start\r\n");
                     test_main_loop2();
                 }
             }
@@ -392,6 +435,7 @@ int main()
             {
                 start_stop_pressed = 0;
             }
+            /*
             if (reset_val == 1)
             {
                 if (reset_pressed == 0)
@@ -408,6 +452,7 @@ int main()
             {
                 reset_pressed = 0;
             }
+            */
         }
         else
         {
@@ -418,9 +463,11 @@ int main()
                 {
                     mode = setting;
                     start_stop_pressed = 1;
+                    t.stop();
                     Buzzer = 1;
+                    thread_sleep_for(20);
                     Buzzer = 0;
-                    pc.printf("stop");
+                    pc.printf("stop\r\n");
                 }
             }
             else
