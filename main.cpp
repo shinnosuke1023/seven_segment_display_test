@@ -299,7 +299,7 @@ void test_main_loop()
 
 void test_main_loop2()
 {
-    setting_time = 750;
+    //setting_time = 750;
     remaining_time = 0;
     t.start();
     while (1)
@@ -340,10 +340,11 @@ int main()
     {
         if (mode == setting)
         {
-            one_min_val = one_min;
-            ten_sec_val = ten_sec;
-            start_stop_val = start_stop;
-            reset_val = reset;
+            remaining_time = setting_time;
+            one_min_val = !one_min;
+            ten_sec_val = !ten_sec;
+            start_stop_val = !start_stop;
+            reset_val = !reset;
             if (one_min_val == 1)
             {
                 if (one_min_pressed == 0)
@@ -410,7 +411,7 @@ int main()
         }
         else
         {
-            start_stop_val = start_stop;
+            start_stop_val = !start_stop;
             if (start_stop_val == 1)
             {
                 if (start_stop_pressed == 0)
