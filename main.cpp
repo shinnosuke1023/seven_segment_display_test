@@ -341,16 +341,21 @@ void test_main_loop2()
         start_stop_val = !start_stop;
         if (start_stop_val == 1)
         {
-            if (start_stop_pressed == 0)
+            thread_sleep_for(1);
+            start_stop_val = !start_stop;
+            if (start_stop_val == 1)
             {
-                setting_time = remaining_time;
-                mode = setting;
-                start_stop_pressed = 1;
-                t.stop();
-                Buzzer = 1;
-                thread_sleep_for(20);
-                Buzzer = 0;
-                pc.printf("stop\r\n");
+                if (start_stop_pressed == 0)
+                {
+                    setting_time = remaining_time;
+                    mode = setting;
+                    start_stop_pressed = 1;
+                    t.stop();
+                    Buzzer = 1;
+                    thread_sleep_for(20);
+                    Buzzer = 0;
+                    pc.printf("stop\r\n");
+                }
             }
         }
         else
@@ -387,16 +392,20 @@ int main()
             //reset_val = !reset;
             if (one_min_val == 1)
             {
-                if (one_min_pressed == 0)
+                thread_sleep_for(1);
+                one_min_val = !one_min;
+                if (one_min_val == 1)
                 {
-                    setting_time += 60;
-                    one_min_pressed = 1;
-                    Buzzer = 1;
-                    thread_sleep_for(20);
-                    Buzzer = 0;
-                    pc.printf("one_min\r\n");
+                    if (one_min_pressed == 0)
+                    {
+                        setting_time += 60;
+                        one_min_pressed = 1;
+                        Buzzer = 1;
+                        thread_sleep_for(20);
+                        Buzzer = 0;
+                        pc.printf("one_min\r\n");
+                    }
                 }
-                
             }
             else
             {
@@ -404,14 +413,19 @@ int main()
             }
             if (ten_sec_val == 1)
             {
-                if (ten_sec_pressed == 0)
+                thread_sleep_for(1);
+                ten_sec_val = !ten_sec;
+                if (ten_sec_val == 1)
                 {
-                    setting_time += 10;
-                    ten_sec_pressed = 1;
-                    Buzzer = 1;
-                    thread_sleep_for(20);
-                    Buzzer = 0;
-                    pc.printf("ten_sec\r\n");
+                    if (ten_sec_pressed == 0)
+                    {
+                        setting_time += 10;
+                        ten_sec_pressed = 1;
+                        Buzzer = 1;
+                        thread_sleep_for(20);
+                        Buzzer = 0;
+                        pc.printf("ten_sec\r\n");
+                    }
                 }
             }
             else
@@ -420,15 +434,20 @@ int main()
             }
             if (start_stop_val == 1)
             {
-                if (start_stop_pressed == 0)
+                thread_sleep_for(1);
+                start_stop_val = !start_stop;
+                if (start_stop_val == 1)
                 {
-                    mode = counting;
-                    start_stop_pressed = 1;
-                    Buzzer = 1;
-                    thread_sleep_for(20);
-                    Buzzer = 0;
-                    pc.printf("start\r\n");
-                    test_main_loop2();
+                    if (start_stop_pressed == 0)
+                    {
+                        mode = counting;
+                        start_stop_pressed = 1;
+                        Buzzer = 1;
+                        thread_sleep_for(20);
+                        Buzzer = 0;
+                        pc.printf("start\r\n");
+                        test_main_loop2();
+                    }
                 }
             }
             else
@@ -459,15 +478,20 @@ int main()
             start_stop_val = !start_stop;
             if (start_stop_val == 1)
             {
-                if (start_stop_pressed == 0)
+                thread_sleep_for(1);
+                start_stop_val = !start_stop;
+                if (start_stop_val == 1)
                 {
-                    mode = setting;
-                    start_stop_pressed = 1;
-                    t.stop();
-                    Buzzer = 1;
-                    thread_sleep_for(20);
-                    Buzzer = 0;
-                    pc.printf("stop\r\n");
+                    if (start_stop_pressed == 0)
+                    {
+                        mode = setting;
+                        start_stop_pressed = 1;
+                        t.stop();
+                        Buzzer = 1;
+                        thread_sleep_for(20);
+                        Buzzer = 0;
+                        pc.printf("stop\r\n");
+                    }
                 }
             }
             else
