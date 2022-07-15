@@ -380,6 +380,9 @@ int main()
     show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
 
     //test_main_loop2();
+    Buzzer = 1;
+    thread_sleep_for(20);
+    Buzzer = 0;
     
     while (1)
     {
@@ -432,27 +435,30 @@ int main()
             {
                 ten_sec_pressed = 0;
             }
-            if (start_stop_val == 1)
+            if (setting_time != 0)
             {
-                thread_sleep_for(1);
-                start_stop_val = !start_stop;
                 if (start_stop_val == 1)
                 {
-                    if (start_stop_pressed == 0)
+                    thread_sleep_for(1);
+                    start_stop_val = !start_stop;
+                    if (start_stop_val == 1)
                     {
-                        mode = counting;
-                        start_stop_pressed = 1;
-                        Buzzer = 1;
-                        thread_sleep_for(20);
-                        Buzzer = 0;
-                        pc.printf("start\r\n");
-                        test_main_loop2();
+                        if (start_stop_pressed == 0)
+                        {
+                            mode = counting;
+                            start_stop_pressed = 1;
+                            Buzzer = 1;
+                            thread_sleep_for(20);
+                            Buzzer = 0;
+                            pc.printf("start\r\n");
+                            test_main_loop2();
+                        }
                     }
                 }
-            }
-            else
-            {
-                start_stop_pressed = 0;
+                else
+                {
+                    start_stop_pressed = 0;
+                }
             }
             /*
             if (reset_val == 1)
