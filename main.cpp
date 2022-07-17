@@ -4,7 +4,7 @@
 #define counting 1
 
 
-Serial pc(USBTX, USBRX); // tx, rx
+// Serial pc(USBTX, USBRX); // tx, rx
 
 // ７セグ出力先のピンを宣言
 DigitalOut seven_seg[] = {
@@ -68,6 +68,7 @@ Timer t;
 Ticker show_7seg;
 
 
+// 表示する桁数を指定
 void specify_digit(int num)
 {
     for ( int i = 0; i < 4; i++)
@@ -77,6 +78,7 @@ void specify_digit(int num)
     four_digit[num] = 1;
 }
 
+// 表示するセグメントを指定
 void show_number(int num)
 {
     switch (num) {
@@ -154,6 +156,7 @@ void show_number(int num)
     }
 }
 
+// 点灯中のセグメントを消灯
 void erace_number()
 {
     for ( int i = 0; i < 4; i++)
@@ -166,6 +169,7 @@ void erace_number()
         }
 }
 
+// 数字を表示
 void show_time()
 {
     second = remaining_time % 60;
@@ -200,6 +204,7 @@ void show_time()
 
 }
 
+// ブザーを鳴らす
 void buzzer_ringing()
 {
     for (int x = 0;x<3;x++)
@@ -215,6 +220,7 @@ void buzzer_ringing()
     }
 }
 
+/*
 void module_test_loop()
 {
     int value = 0;
@@ -232,7 +238,9 @@ void module_test_loop()
         }
     }
 }
+*/
 
+/*
 void test_main_loop()
 {
     int value = 0;
@@ -280,7 +288,6 @@ void test_main_loop()
                 digit -= 1;
             }
         }
-        /*
         if (reset_val == 1)
         {
             if (digit == 4)
@@ -292,15 +299,16 @@ void test_main_loop()
                 digit += 1;
             }
         }
-        */
         specify_digit(digit);
         show_number(value);
     }
         
 
 }
+*/
 
-void test_main_loop2()
+// メインループ
+void main_loop()
 {
     //setting_time = 750;
     remaining_time = 0;
@@ -313,7 +321,7 @@ void test_main_loop2()
             if (remaining_time > 0)
             {
                 setting_time = remaining_time;
-                pc.printf("clock changed\r\n");
+                // pc.printf("clock changed\r\n");
                 t.stop();
                 t.reset();
                 t.start();
@@ -327,7 +335,7 @@ void test_main_loop2()
             }
             t.stop();
             t.reset();
-            pc.printf("end\r\n");
+            // pc.printf("end\r\n");
             setting_time = 0;
             mode = setting;
             buzzer_ringing();
@@ -354,7 +362,7 @@ void test_main_loop2()
                     Buzzer = 1;
                     thread_sleep_for(20);
                     Buzzer = 0;
-                    pc.printf("stop\r\n");
+                    // pc.printf("stop\r\n");
                 }
             }
         }
@@ -379,7 +387,7 @@ int main()
     }
     show_7seg.attach(&show_time, 0.005); // show_time関数を0.005秒=5マイクロ秒刻みで実行
 
-    //test_main_loop2();
+    //main_loop();
     Buzzer = 1;
     thread_sleep_for(20);
     Buzzer = 0;
@@ -406,7 +414,7 @@ int main()
                         Buzzer = 1;
                         thread_sleep_for(20);
                         Buzzer = 0;
-                        pc.printf("one_min\r\n");
+                        // pc.printf("one_min\r\n");
                     }
                 }
             }
@@ -427,7 +435,7 @@ int main()
                         Buzzer = 1;
                         thread_sleep_for(20);
                         Buzzer = 0;
-                        pc.printf("ten_sec\r\n");
+                        // pc.printf("ten_sec\r\n");
                     }
                 }
             }
@@ -450,8 +458,8 @@ int main()
                             Buzzer = 1;
                             thread_sleep_for(20);
                             Buzzer = 0;
-                            pc.printf("start\r\n");
-                            test_main_loop2();
+                            // pc.printf("start\r\n");
+                            main_loop();
                         }
                     }
                 }
@@ -496,7 +504,7 @@ int main()
                         Buzzer = 1;
                         thread_sleep_for(20);
                         Buzzer = 0;
-                        pc.printf("stop\r\n");
+                        // pc.printf("stop\r\n");
                     }
                 }
             }
